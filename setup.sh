@@ -37,7 +37,12 @@ pip install --upgrade pip --quiet
 
 # Installer les dépendances
 echo "📥 Installation des dépendances..."
-pip install -r requirements.txt --quiet
+
+# Créer un répertoire temporaire alternatif si /tmp est plein
+mkdir -p ~/tmp
+
+# Installer avec TMPDIR personnalisé et sans cache pour économiser l'espace
+TMPDIR=~/tmp pip install --no-cache-dir -r requirements.txt --quiet
 echo "✅ Dépendances installées"
 echo
 
