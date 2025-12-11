@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Base de données
+*.db
+*.sqlite
+*.sqlite3
+trading_simulation.db
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environnement
+.env
+.env.local
+
+# Fichiers temporaires
+*.tmp
+*.bak
+*.cache
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Fichiers de sauvegarde
+*.sql
+backup/
+*.backup
+
