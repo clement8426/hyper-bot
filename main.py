@@ -619,6 +619,10 @@ def print_statistics():
 
 
 # ==================== BOUCLE PRINCIPALE ====================
+# S'assurer que le dossier logs existe
+import os
+os.makedirs("logs", exist_ok=True)
+
 print("="*70)
 print("🤖 BOT SIMULATION - Collecte de données ML")
 print("="*70)

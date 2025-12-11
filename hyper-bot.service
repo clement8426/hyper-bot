@@ -12,14 +12,9 @@ ExecStart=/home/%USER%/hyper-bot/venv/bin/python main.py
 Restart=always
 RestartSec=10
 
-# Logs (créer le dossier avant de démarrer)
+# Logs (créer le dossier avant de démarrer - le script le fait)
 StandardOutput=append:/home/%USER%/hyper-bot/logs/bot.log
 StandardError=append:/home/%USER%/hyper-bot/logs/bot_error.log
-
-# S'assurer que le dossier logs existe et a les bonnes permissions
-ExecStartPre=/bin/mkdir -p /home/%USER%/hyper-bot/logs
-ExecStartPre=/bin/chown -R %USER%:%USER% /home/%USER%/hyper-bot/logs
-ExecStartPre=/bin/chmod 755 /home/%USER%/hyper-bot/logs
 
 # Sécurité (optionnel)
 # NoNewPrivileges=true
