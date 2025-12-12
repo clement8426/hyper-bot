@@ -159,6 +159,24 @@ Le bot génère des signaux basés sur 7 confirmations :
 - **SHORT** : Si 5+ indicateurs sont bear
 - **AUCUN** : Si pas assez de confirmations
 
+### 🛡️ Filtres de sécurité (v1.1.0+)
+
+Pour éviter les trades à contre-tendance dangereux :
+
+**Filtres LONG** (refuse si) :
+- ❌ RSI > 70 (marché surchauffé)
+- ❌ Tendance court ET moyen terme baissières
+
+**Filtres SHORT** (refuse si) :
+- ❌ RSI < 30 (marché survendu)
+- ❌ Tendance court ET moyen terme haussières
+
+Ces filtres **bloquent automatiquement** les signaux dangereux et l'affichent dans les logs :
+```
+⚠️ SHORT filtré (tendance haussière)
+⚠️ LONG filtré (RSI surchauffé)
+```
+
 ## 📈 Base de données
 
 Le bot crée automatiquement une base SQLite (`trading_simulation.db`) avec :

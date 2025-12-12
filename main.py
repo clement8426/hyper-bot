@@ -360,7 +360,7 @@ def calculate_all_indicators(df):
 
 
 def get_signal(ind):
-    """Génère signal LONG/SHORT avec score"""
+    """Génère signal LONG/SHORT avec score + filtres de sécurité"""
     
     bull_conditions = [
         ind["rsi"] < 36,
@@ -385,10 +385,28 @@ def get_signal(ind):
     bear_score = sum(bear_conditions)
     
     signal = None
+    
+    # ===== FILTRES DE SÉCURITÉ (éviter les trades à contre-tendance) =====
+    
+    # Pour un LONG: vérifier que RSI n'est pas trop élevé et tendance court terme favorable
     if bull_score >= MIN_CONFIRMATIONS:
-        signal = "LONG"
+        # Filtres de sécurité LONG
+        if ind["rsi"] > 70:  # Marché surchauffé, pas de LONG
+            pass
+        elif ind["trend_short"] == "DOWN" and ind["trend_medium"] == "DOWN":  # Tendance baissière forte
+            pass
+        else:
+            signal = "LONG"
+    
+    # Pour un SHORT: vérifier que RSI n'est pas trop bas et tendance court terme favorable
     elif bear_score >= MIN_CONFIRMATIONS:
-        signal = "SHORT"
+        # Filtres de sécurité SHORT
+        if ind["rsi"] < 30:  # Marché survendu, pas de SHORT
+            pass
+        elif ind["trend_short"] == "UP" and ind["trend_medium"] == "UP":  # Tendance haussière forte
+            pass
+        else:
+            signal = "SHORT"
     
     return signal, bull_score, bear_score
 
@@ -694,7 +712,20 @@ while True:
                 
                 # Afficher toutes les 2 itérations pour ne pas surcharger
                 if iteration % 2 == 0:
-                    print(f"{signal_emoji} {asset}: ${current_price:.2f} | RSI:{rsi:.1f} | Bull:{bull_emoji}{bull_score}/7 | Bear:{bear_emoji}{bear_score}/7 | Signal: {signal or 'AUCUN'}")
+                    # Afficher les raisons de filtrage
+                    filter_reason = ""
+                    if bull_score >= MIN_CONFIRMATIONS and not signal:
+                        if rsi > 70:
+                            filter_reason = " ⚠️ LONG filtré (RSI surchauffé)"
+                        elif indicators["trend_short"] == "DOWN" and indicators["trend_medium"] == "DOWN":
+                            filter_reason = " ⚠️ LONG filtré (tendance baissière)"
+                    elif bear_score >= MIN_CONFIRMATIONS and not signal:
+                        if rsi < 30:
+                            filter_reason = " ⚠️ SHORT filtré (RSI survendu)"
+                        elif indicators["trend_short"] == "UP" and indicators["trend_medium"] == "UP":
+                            filter_reason = " ⚠️ SHORT filtré (tendance haussière)"
+                    
+                    print(f"{signal_emoji} {asset}: ${current_price:.2f} | RSI:{rsi:.1f} | Bull:{bull_emoji}{bull_score}/7 | Bear:{bear_emoji}{bear_score}/7 | Signal: {signal or 'AUCUN'}{filter_reason}")
             
             # Signaux de trading
             if signal == "LONG" and not has_position:
