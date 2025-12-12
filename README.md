@@ -1,144 +1,283 @@
-# 🤖 Hyper-Bot - Trading Bot Hyperliquid
+# 🤖 Hyper-Bot - Bots de Trading Automatisés
 
-Bot de trading automatisé avec 30+ indicateurs techniques et filtres de sécurité intelligents.
+Deux bots de trading avec 30+ indicateurs techniques et filtres de sécurité intelligents.
 
-## 🚀 Installation
+## 📦 Structure du projet
 
-### Local (Mac/Linux/Windows)
-
-```bash
-# Cloner le repo
-git clone https://github.com/votre-username/hyper-bot.git
-cd hyper-bot
-
-# Lancer (crée venv + installe dépendances + lance le bot)
-./run_bot.sh
+```
+hyper-bot/
+├── install.sh              # Installation unique
+├── launch_bots.sh          # Lancer les bots
+├── README.md              # Ce fichier
+│
+├── crypto-bot/             # 🔵 Bot Hyperliquid (24/7)
+│   ├── main.py
+│   ├── view_indicators.sh
+│   ├── view_history.sh
+│   ├── trading_simulation.db
+│   └── logs/
+│
+├── sp500-bot/              # 🔴 Bot S&P 500 Day Trading
+│   ├── main.py
+│   ├── sp500_tickers.py
+│   ├── get_sp500_list.py
+│   ├── view_indicators.sh
+│   ├── view_history.sh
+│   ├── sp500_daytrading.db
+│   └── logs/
+│
+└── venv/                   # Environnement virtuel partagé
 ```
 
-### VPS (Ubuntu/Debian) - Mode 24/7
+---
+
+## 🚀 Installation rapide
 
 ```bash
 # 1. Cloner le repo
 git clone https://github.com/votre-username/hyper-bot.git
 cd hyper-bot
 
-# 2. Setup initial
-./setup.sh
+# 2. Installer
+./install.sh
 
-# 3. Configurer le service systemd
-sudo cp hyper-bot.service /etc/systemd/system/
-sudo sed -i "s|%USER%|$USER|g" /etc/systemd/system/hyper-bot.service
-sudo systemctl daemon-reload
-sudo systemctl enable hyper-bot
-sudo systemctl start hyper-bot
-
-# 4. Vérifier le statut
-sudo systemctl status hyper-bot
-tail -f ~/hyper-bot/logs/bot.log
+# 3. Lancer les bots
+./launch_bots.sh
 ```
-
-## ⚙️ Configuration
-
-Modifiez les paramètres dans `main.py` (lignes 10-27) :
-
-```python
-ASSETS = ["BTC", "ETH", "SOL", "ARB", "MATIC"]
-INITIAL_CAPITAL = 1000
-LEVERAGE = 2
-RISK_PER_TRADE = 0.01  # 1% risque par trade
-STOP_LOSS_PCT = 0.01   # 1% stop loss
-MIN_CONFIRMATIONS = 5  # 5 signaux sur 7 minimum
-MIN_TRADE_DURATION = 5      # 5 minutes minimum
-MAX_TRADE_DURATION = 120    # 2 heures maximum
-```
-
-## 🛡️ Filtres de sécurité (v1.1.0+)
-
-Le bot refuse automatiquement :
-- ❌ LONG si RSI > 70 (surchauffe) ou tendance baissière
-- ❌ SHORT si RSI < 30 (survente) ou tendance haussière
-
-## 📊 Analyse des données
-
-```bash
-# Voir tous les indicateurs des trades
-./view_indicators.sh
-
-# Résumé des trades depuis hier
-./view_history.sh
-
-# Analyse ML (après plusieurs jours de données)
-source venv/bin/activate
-python ml.py
-```
-
-## 🔧 Commandes VPS
-
-```bash
-# Voir les logs en direct
-tail -f ~/hyper-bot/logs/bot.log
-
-# Redémarrer le bot
-sudo systemctl restart hyper-bot
-
-# Arrêter le bot
-sudo systemctl stop hyper-bot
-
-# Voir le statut
-sudo systemctl status hyper-bot
-```
-
-## 📈 Base de données
-
-Toutes les données sont dans `trading_simulation.db` (SQLite) :
-
-```sql
--- Voir les derniers trades
-SELECT * FROM trades WHERE status='CLOSED' ORDER BY id DESC LIMIT 10;
-
--- Statistiques
-SELECT 
-    COUNT(*) as total,
-    SUM(pnl) as pnl_total,
-    AVG(pnl) as pnl_moyen
-FROM trades WHERE status='CLOSED';
-```
-
-## 🔄 Mise à jour
-
-```bash
-# Sur le VPS
-cd ~/hyper-bot
-git pull origin main
-sudo systemctl restart hyper-bot
-```
-
-## ⚠️ Avertissement
-
-**Bot de simulation uniquement.** Le trading comporte des risques. Ne tradez jamais plus que ce que vous pouvez perdre.
-
-## 📝 Structure du projet
-
-```
-hyper-bot/
-├── main.py               # Bot principal
-├── ml.py                 # Analyse ML
-├── requirements.txt      # Dépendances Python
-├── run_bot.sh           # Lancer en local
-├── setup.sh             # Setup VPS
-├── hyper-bot.service    # Service systemd
-├── view_indicators.sh   # Voir les indicateurs
-├── view_history.sh      # Voir l'historique
-└── README.md            # Ce fichier
-```
-
-## 🆘 Support
-
-- 🐛 Bug ? Ouvrir une issue sur GitHub
-- 💬 Questions ? Consulter le code source (commenté)
-- 📊 Données ML ? Attendre plusieurs jours de collecte
 
 ---
 
-**Version actuelle : 1.1.0** | MIT License
+## 🤖 Les deux bots
+
+### 🔵 Bot Crypto (Hyperliquid)
+
+| Caractéristique | Valeur |
+|----------------|--------|
+| **Plateforme** | Hyperliquid API |
+| **Actifs** | BTC, ETH, SOL, ARB, MATIC |
+| **Horaires** | 24/7 |
+| **Capital** | $1,000 |
+| **Levier** | 2x |
+| **Risque** | 1% par trade |
+| **Durée trades** | 5 min - 2h |
+| **Base de données** | `crypto-bot/trading_simulation.db` |
+
+**Stratégie** : Multi-indicateurs avec filtres anti-contre-tendance
+
+---
+
+### 🔴 Bot S&P 500 Day Trading
+
+| Caractéristique | Valeur |
+|----------------|--------|
+| **Plateforme** | Yahoo Finance |
+| **Actifs** | Top 20 / 502 analysés |
+| **Horaires** | 9h30-16h00 EST (Lun-Ven) |
+| **Capital** | $10,000 |
+| **Levier** | 1x (sans levier) |
+| **Stratégie** | Opening Range Breakout |
+| **Scan** | 9h45 (analyse 15 premières min) |
+| **Base de données** | `sp500-bot/sp500_daytrading.db` |
+
+**Stratégie** : Notation des gaps/volume/momentum à l'ouverture
+
+---
+
+## 📊 Analyse des données
+
+### Bot Crypto
+
+```bash
+cd crypto-bot
+
+# Voir les indicateurs des trades
+./view_indicators.sh
+
+# Voir l'historique complet
+./view_history.sh
+
+# Requête SQL custom
+sqlite3 trading_simulation.db "SELECT * FROM trades WHERE status='CLOSED'"
+```
+
+### Bot S&P 500
+
+```bash
+cd sp500-bot
+
+# Voir les scores d'ouverture
+./view_indicators.sh
+
+# Voir l'historique quotidien
+./view_history.sh
+
+# Voir le scan du jour
+sqlite3 sp500_daytrading.db "SELECT * FROM daily_scans WHERE date = '2025-12-13'"
+```
+
+---
+
+## 🖥️ Déploiement VPS (24/7)
+
+### 1. Préparation
+
+```bash
+# Sur votre machine locale
+git add .
+git commit -m "Structure finale avec 2 bots"
+git push origin main
+
+# Sur le VPS
+cd ~
+git clone https://github.com/votre-username/hyper-bot.git
+cd hyper-bot
+./install.sh
+```
+
+### 2. Configuration systemd
+
+**Bot Crypto :**
+
+```bash
+sudo nano /etc/systemd/system/crypto-bot.service
+```
+
+```ini
+[Unit]
+Description=Crypto Trading Bot (Hyperliquid)
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/hyper-bot/crypto-bot
+Environment="PYTHONUNBUFFERED=1"
+ExecStart=/home/ubuntu/hyper-bot/venv/bin/python -u main.py
+Restart=always
+RestartSec=10
+
+StandardOutput=append:/home/ubuntu/hyper-bot/crypto-bot/logs/bot.log
+StandardError=append:/home/ubuntu/hyper-bot/crypto-bot/logs/bot_error.log
+
+[Install]
+WantedBy=multi-user.target
+```
+
+**Bot S&P 500 :**
+
+```bash
+sudo nano /etc/systemd/system/sp500-bot.service
+```
+
+```ini
+[Unit]
+Description=S&P 500 Day Trading Bot
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/hyper-bot/sp500-bot
+Environment="PYTHONUNBUFFERED=1"
+ExecStart=/home/ubuntu/hyper-bot/venv/bin/python -u main.py
+Restart=always
+RestartSec=10
+
+StandardOutput=append:/home/ubuntu/hyper-bot/sp500-bot/logs/bot.log
+StandardError=append:/home/ubuntu/hyper-bot/sp500-bot/logs/bot_error.log
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### 3. Activation
+
+```bash
+# Recharger systemd
+sudo systemctl daemon-reload
+
+# Activer au démarrage
+sudo systemctl enable crypto-bot sp500-bot
+
+# Démarrer
+sudo systemctl start crypto-bot sp500-bot
+
+# Vérifier
+sudo systemctl status crypto-bot
+sudo systemctl status sp500-bot
+
+# Logs en direct
+tail -f crypto-bot/logs/bot.log
+tail -f sp500-bot/logs/bot.log
+```
+
+---
+
+## 🔧 Commandes utiles
+
+### Gestion des bots (systemd)
+
+```bash
+# Redémarrer
+sudo systemctl restart crypto-bot
+sudo systemctl restart sp500-bot
+
+# Arrêter
+sudo systemctl stop crypto-bot
+sudo systemctl stop sp500-bot
+
+# Logs
+journalctl -u crypto-bot -f
+journalctl -u sp500-bot -f
+```
+
+### Mise à jour
+
+```bash
+cd ~/hyper-bot
+git pull origin main
+sudo systemctl restart crypto-bot sp500-bot
+```
+
+---
+
+## 📈 Analyse ML
+
+Après plusieurs jours de collecte de données :
+
+```bash
+# Adapter ml.py pour analyser crypto-bot
+python ml.py  # Modifier DB_FILE dans le script
+
+# Ou analyser sp500-bot
+cd sp500-bot
+# Modifier ml.py pour pointer vers sp500_daytrading.db
+```
+
+---
+
+## ⚠️ Avertissement
+
+**Simulation uniquement.** Ces bots :
+- Ne passent pas de vrais ordres
+- Simulent les trades localement
+- Collectent des données pour analyse ML
+
+Pour du trading réel, il faudrait :
+- Comptes de trading actifs
+- API keys authentifiées
+- Gestion des ordres réels
+- Capital réel à risque
+
+---
+
+## 🆘 Support
+
+- 🐛 Bug ? Ouvrir une issue
+- 💬 Questions ? Consulter le code (commenté)
+- 📊 Analyse ? Attendre plusieurs jours de données
+
+---
+
+**Version : 2.0.0** | MIT License | Trading Simulation
 
